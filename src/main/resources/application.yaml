@@ -1,0 +1,23 @@
+spring.cloud.stream:
+  function:
+    definition: functionName
+  bindings:
+    functionName-in-0:
+      group: group-name
+      destination: input-topic
+      consumer:
+        use-native-decoding: true
+  kafka:
+    binder:
+      brokers: localhost:29092
+    bindings:
+      functionName-in-0:
+        consumer:
+          enableDlq: true
+          dlqName: dlq-topic
+          dlqProducerProperties:
+            configuration:
+              value.serializer: org.apache.kafka.common.serialization.DoubleSerializer
+          configuration:
+            value.deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+            spring.deserializer.value.delegate.class: org.apache.kafka.common.serialization.DoubleDeserializer
