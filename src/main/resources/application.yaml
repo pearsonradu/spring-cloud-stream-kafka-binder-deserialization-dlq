@@ -9,6 +9,12 @@ spring:
           destination: input-topic
           consumer:
             max-attempts: 1
+            batch-mode: true
+            use-native-decoding: true
+        functionName-out-0:
+          destination: output-topic
+          producer:
+            use-native-encoding: true
       kafka:
         binder:
           brokers: localhost:9092
@@ -19,8 +25,14 @@ spring:
               dlq-name: dlq-topic
               dlq-producer-properties:
                 configuration:
+                  key.serializer: org.apache.kafka.common.serialization.ByteArraySerializer
                   value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
               configuration:
                 value.deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
                 spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-                spring.json.value.default.type: com.example.demo.Event
+                # spring.json.value.default.type: com.example.demo.Event
+                spring.json.trusted.packages: com.example.demo
+          functionName-out-0:
+            producer:
+              configuration:
+                value.serializer: org.springframework.kafka.support.serializer.JsonSerializer
